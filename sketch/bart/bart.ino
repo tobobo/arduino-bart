@@ -8,6 +8,7 @@ int estimates[] = {0, 0, 0, 0, 0};
 int displayedEstimates[] = {0, 0, 0, 0, 0};
 int estimatesLength = 5;
 int numEstimates = 0;
+int numDisplayedEstimates = 0;
 int displayIndex = 0;
 int maxEstimates = 3;
 String dataIn;
@@ -65,7 +66,13 @@ void switchEstimate() {
      if (displayTime == 0 || displayIndex >= min(numEstimates, maxEstimates) - 1) {
        displayIndex = 0; 
      } else {
-       displayIndex++;
+       if (
+         estimates[displayIndex + 1] == displayedEstimates[displayIndex + 1] ||
+         displayedEstimates[displayIndex + 1] - estimates[displayIndex] > 3 || 
+         displayedEstimates[displayIndex + 1] == 0
+        ) {
+         displayIndex++;
+       }
      }
      displayTime = currentTime;
      displayedEstimates[displayIndex] = estimates[displayIndex];
