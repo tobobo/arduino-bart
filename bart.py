@@ -33,9 +33,11 @@ def real_thing():
             estimates = etd['estimate']
             if type(estimates) is collections.OrderedDict:
                 estimates = [estimates]
-            for estimate in etd['estimate']:
+            for estimate in estimates:
                 if estimate['direction'] == train_direction:
-                    if estimate['minutes'] not in ['Arriving', 'Leaving']:
+                    if estimate['minutes'] == 'Arriving':
+                        minutes.append(1)
+                    else if estimate['minutes'] != 'Leaving':
                         minutes.append(int(estimate['minutes']))
 
         minutes.sort()
