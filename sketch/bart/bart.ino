@@ -5,6 +5,7 @@ int firstDigitPin = 2;
 int secondDigitPin = 3;
 
 int estimates[] = {0, 0, 0, 0, 0};
+int displayedEstimates[] = {0, 0, 0, 0, 0};
 int estimatesLength = 5;
 int numEstimates = 0;
 int displayIndex = 0;
@@ -45,7 +46,8 @@ void loop() {
 }
 
 void displayDigit() {
-   if (estimates[displayIndex] > 0) displayNumber(estimates[displayIndex], 1);
+//   if (displayedEstimates[displayIndex] > 0)
+     displayNumber(displayedEstimates[displayIndex], 1);
 }
 
 void switchEstimate() {
@@ -57,10 +59,15 @@ void switchEstimate() {
      displaySwitch = 4000; 
    }
    if (displayTime == 0 || currentTime - displayTime > displaySwitch) {
+     if (displayTime == 0) {
+       displayIndex = 0; 
+     } else {
+       displayIndex++;
+     }
      displayTime = currentTime;
-     displayIndex++; 
+     if (displayIndex >= min(numEstimates, maxEstimates)) displayIndex = 0;
+     displayedEstimates[displayIndex] = estimates[displayIndex];
    }
-   if (displayIndex >= min(numEstimates, maxEstimates)) displayIndex = 0;
 }
 
 void readSerialAtInterval() {

@@ -4,13 +4,20 @@ import serial
 import time
 import collections
 import os
+import glob
 
 api_key = os.environ.get('BART_API_KEY')
 station = os.environ.get('BART_STATION', 'plza')
 train_direction = os.environ.get('BART_DIRECTION', 'South')
+device = '/dev/tty.usbmodem1411'
 
-def realThing():
+def get_device():
+    devices = glob.glob('/dev/tty.usbmodem*')
+    device = devices[0]
+
+def real_thing():
     try:
+        get_device();
         file = urllib2.urlopen("http://api.bart.gov/api/etd.aspx?cmd=etd&orig=" + station + "&key=" + api_key)
         data = file.read()
         file.close()
@@ -40,7 +47,7 @@ def realThing():
 
         print minute_string
         try:
-            ser = serial.Serial('/dev/tty.usbmodem1411', 9600)
+            ser = serial.Serial(device, 9600)
             ser.write(minute_string)
             ser.close()
         except:
@@ -54,7 +61,8 @@ def realThing():
 
 def fake():
     try:
-        ser = serial.Serial('/dev/tty.usbmodem1411', 9600)
+        get_device();
+        ser = serial.Serial(device, 9600)
         faux_data = '4 11 23 ;'
         ser.write(faux_data)
         print faux_data;
@@ -65,5 +73,5 @@ def fake():
         time.sleep(15)
 
 while True:
-    realThing()
+    real_thing()
     # fake()
