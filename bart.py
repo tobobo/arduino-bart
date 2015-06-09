@@ -55,7 +55,7 @@ def real_thing():
         except:
             pass
         finally:
-            time.sleep(15)
+            time.sleep(12)
 
     except:
         print 'error loading data'
