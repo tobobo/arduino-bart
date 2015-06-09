@@ -46,8 +46,11 @@ void loop() {
 }
 
 void displayDigit() {
-   if (displayedEstimates[displayIndex] > 0)
+   if (displayedEstimates[displayIndex] > 0) {
      displayNumber(displayedEstimates[displayIndex], 1);
+   } else {
+     delay(1);
+   }
 }
 
 void switchEstimate() {
