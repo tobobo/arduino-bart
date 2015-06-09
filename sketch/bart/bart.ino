@@ -62,17 +62,13 @@ void switchEstimate() {
      maxEstimates = 3;
      displaySwitch = 4000; 
    }
+   int numDisplayedEstimates = min(numEstimates, maxEstimates);
+   int previousIndex = displayIndex;
    if (displayTime == 0 || currentTime - displayTime > displaySwitch) {
-     if (displayTime == 0 || displayIndex >= min(numEstimates, maxEstimates) - 1) {
+     if (displayTime == 0 || displayIndex >= numDisplayedEstimates - 1) {
        displayIndex = 0; 
      } else {
-       if (
-         estimates[displayIndex + 1] == displayedEstimates[displayIndex + 1] ||
-         displayedEstimates[displayIndex + 1] - estimates[displayIndex] > 3 || 
-         displayedEstimates[displayIndex + 1] == 0
-        ) {
-         displayIndex++;
-       }
+       displayIndex++;
      }
      displayTime = currentTime;
      displayedEstimates[displayIndex] = estimates[displayIndex];
@@ -251,4 +247,8 @@ int getDigitSegments(int digit, int digitSegments[]) {
         return 6;
         break;
    }
+}
+
+int trueMod(int x, int y) {
+   return ((x % y) + y) % y;
 }

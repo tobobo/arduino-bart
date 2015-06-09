@@ -47,15 +47,18 @@ def real_thing():
             minute_string += str(minute) + ' '
         minute_string += ';'
 
-        print minute_string
-        try:
-            ser = serial.Serial(device, 9600)
-            ser.write(minute_string)
-            ser.close()
-        except:
-            pass
-        finally:
-            time.sleep(12)
+        smallInterval = 1.0
+        largeInterval = 12
+        for i in range(0, int(largeInterval/smallInterval)):
+            try:
+                print minute_string
+                ser = serial.Serial(device, 9600)
+                ser.write(minute_string)
+                ser.close()
+            except:
+                pass
+            finally:
+                time.sleep(smallInterval)
 
     except:
         print 'error loading data'
