@@ -62,13 +62,12 @@ void switchEstimate() {
      displaySwitch = 4000; 
    }
    if (displayTime == 0 || currentTime - displayTime > displaySwitch) {
-     if (displayTime == 0) {
+     if (displayTime == 0 || displayIndex >= min(numEstimates, maxEstimates) - 1) {
        displayIndex = 0; 
      } else {
        displayIndex++;
      }
      displayTime = currentTime;
-     if (displayIndex >= min(numEstimates, maxEstimates)) displayIndex = 0;
      displayedEstimates[displayIndex] = estimates[displayIndex];
    }
 }
