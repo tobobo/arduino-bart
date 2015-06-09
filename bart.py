@@ -37,7 +37,7 @@ def real_thing():
                 if estimate['direction'] == train_direction:
                     if estimate['minutes'] == 'Arriving':
                         minutes.append(1)
-                    else if estimate['minutes'] != 'Leaving':
+                    elif estimate['minutes'] != 'Leaving':
                         minutes.append(int(estimate['minutes']))
 
         minutes.sort()
