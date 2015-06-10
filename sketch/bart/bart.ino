@@ -56,21 +56,22 @@ void loop() {
 }
 
 void enableLEDs() {
+  int color = 0;
     for (int i = 0; i < numEstimates; i++) {
        if (estimates[i] == 0) {
           continue;
        } else if (estimateIsGreen(estimates[i])) {
-           enableGreen();
-           return;
+           color = 1;
+           break;
        } else if (estimateIsRed(estimates[i])) {
-         enableRed();
-         return;
-       } else if (estimateOutOfBounds(estimates[i])) {
-         disableLights();
-         return; 
+           color = 2;
        }
     }
-    disableLights();
+    switch (color) {
+       case 0: disableLights(); break;
+       case 1: enableGreen(); break;
+       case 2: enableRed(); break;
+    }
 }
 
 void enableGreen() {
