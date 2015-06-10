@@ -26,6 +26,7 @@ long displaySwitch = 3000;
 long currentTime = 0;
 long dataTime = 0;
 long dataTimeout = 45000;
+boolean dataReceived = false;
 
 void setup() {
   for (int i = 0; i < numPins; i++) {
@@ -33,6 +34,7 @@ void setup() {
   }
   pinMode(firstDigitPin, OUTPUT);
   pinMode(secondDigitPin, OUTPUT);
+  pinMode(13, OUTPUT);
   
   Serial.begin(9600);
   Serial.setTimeout(1000);
@@ -43,10 +45,10 @@ void loop() {
    currentTime = millis();
    readSerialAtInterval();
    switchEstimate();
-   displayDigit();
+   displayEstimateIfPresent();
 }
 
-void displayDigit() {
+void displayEstimateIfPresent() {
    if (displayedEstimates[displayIndex] > 0) {
      displayNumber(displayedEstimates[displayIndex], 1);
    } else {
@@ -55,18 +57,22 @@ void displayDigit() {
 }
 
 void switchEstimate() {
-   if (estimates[3] > 0 && estimates[3] - estimates[0] < 30) {
+   if (!dataReceived) return;
+   if (estimates[3] > 0 && estimates[3] <= 25) {
       maxEstimates = 4;
-      displaySwitch = 3000;
+      displaySwitch = 2500;
+   } else if ((estimates[2] > 0 && estimates[2] <= 45)) {
+      maxEstimates = 3;
+      displaySwitch = 3333;
    } else {
-     maxEstimates = 3;
-     displaySwitch = 4000; 
+     maxEstimates = 2;
+     displaySwitch = 3333;
    }
    int numDisplayedEstimates = min(numEstimates, maxEstimates);
    int previousIndex = displayIndex;
-   if (displayTime == 0 || currentTime - displayTime > displaySwitch) {
-     if (displayTime == 0 || displayIndex >= numDisplayedEstimates - 1) {
-       displayIndex = 0; 
+   if (displayTime <= 0 || currentTime - displayTime > displaySwitch) {
+     if (displayTime <= 0 || displayIndex >= numDisplayedEstimates - 1) {
+       displayIndex = 0;
      } else {
        displayIndex++;
      }
@@ -86,6 +92,7 @@ void readSerial() {
  if (Serial.available() > 0) {
    dataIn = Serial.readStringUntil(';');
    if (dataIn.length() > 0) {
+     dataReceived = true;
      dataTime = currentTime;
      clearEstimates();
      int estimateIndex = -1;
@@ -111,7 +118,10 @@ void readSerial() {
 
 void clearEstimatesIfTimedOut() {
   if (currentTime - dataTime > dataTimeout) {
-   clearEstimates(); 
+     clearEstimates();
+     clearDisplayedEstimates();
+     dataReceived = false;
+     displayIndex = 0;
   } 
 }
 
@@ -119,6 +129,12 @@ void clearEstimates() {
    for (int i = 0; i < estimatesLength; i++) {
      estimates[i] = 0;
    }
+}
+
+void clearDisplayedEstimates() {
+  for (int i = 0; i < estimatesLength; i++) {
+     displayedEstimates[i] = 0; 
+  }
 }
 
 void displayNumber(int number, int time) {
