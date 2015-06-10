@@ -19,8 +19,7 @@ intervals = {
     'server_poll': 12,
     'serial_write': 1,
     'serial_error': 5,
-
-
+    'load_error': 10
 }
 
 def get_device():

@@ -3,6 +3,8 @@ int numPins = 8;
 int prevSegment = -1;
 int firstDigitPin = 2;
 int secondDigitPin = 3;
+int greenPin = 13;
+int redPin = 12;
 
 int estimates[] = {0, 0, 0, 0, 0};
 int displayedEstimates[] = {0, 0, 0, 0, 0};
@@ -11,6 +13,9 @@ int numEstimates = 0;
 int numDisplayedEstimates = 0;
 int displayIndex = 0;
 int maxEstimates = 3;
+int greenMax = 15;
+int redMax = 10;
+int redMin = 6;
 String dataIn;
 
 int digitSegments[8];
@@ -34,7 +39,8 @@ void setup() {
   }
   pinMode(firstDigitPin, OUTPUT);
   pinMode(secondDigitPin, OUTPUT);
-  pinMode(13, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(redPin, OUTPUT);
   
   Serial.begin(9600);
   Serial.setTimeout(1000);
@@ -44,8 +50,54 @@ void setup() {
 void loop() {
    currentTime = millis();
    readSerialAtInterval();
+   enableLEDs();
    switchEstimate();
    displayEstimateIfPresent();
+}
+
+void enableLEDs() {
+    for (int i = 0; i < numEstimates; i++) {
+       if (estimates[i] == 0) {
+          continue;
+       } else if (estimateIsGreen(estimates[i])) {
+           enableGreen();
+           return;
+       } else if (estimateIsRed(estimates[i])) {
+         enableRed();
+         return;
+       } else if (estimateOutOfBounds(estimates[i])) {
+         disableLights();
+         return; 
+       }
+    }
+    disableLights();
+}
+
+void enableGreen() {
+  digitalWrite(greenPin, HIGH);
+  digitalWrite(redPin, LOW); 
+}
+
+void enableRed(){
+  digitalWrite(redPin, HIGH);
+  digitalWrite(greenPin, LOW); 
+}
+
+void disableLights() {
+   digitalWrite(redPin, LOW);
+   digitalWrite(greenPin, LOW); 
+}
+
+boolean estimateIsGreen(int estimate) {
+  return estimate > redMax && estimate <= greenMax;
+}
+
+boolean estimateIsRed(int estimate) {
+ return estimate >= redMin && estimate <= redMax;
+}
+
+boolean estimateOutOfBounds(int estimate) {
+  return estimate < redMin || estimate > greenMax;
 }
 
 void displayEstimateIfPresent() {
